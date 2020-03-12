@@ -3,14 +3,43 @@
 import App, { Container } from "next/app";
 import "antd/dist/antd.css";
 import { Provider } from "react-redux";
+import Router from "next/router";
+import Link from "next/link";
 
 import Layout from "../components/Layout";
 import MyContext from "../lib/my-context";
 import WithReduxApp from "../lib/with-redux";
+import PageLoading from "../components/PageLoading";
 class MyApp extends App {
   state = {
-    context: "value"
+    context: "value",
+    loading: false
   };
+
+  startLoading = () => {
+    this.setState({
+      loading: true
+    });
+  };
+
+  stopLoading = () => {
+    this.setState({
+      loading: false
+    });
+  };
+
+  componentDidMount() {
+    Router.events.on("routeChangeStart", this.startLoading);
+    Router.events.on("routeChangeComplete", this.stopLoading);
+    Router.events.on("routeChangeError", this.stopLoading);
+  }
+
+  componentWillUnmount() {
+    Router.events.off("routeChangeStart", this.startLoading);
+    Router.events.off("routeChangeComplete", this.stopLoading);
+    Router.events.off("routeChangeError", this.stopLoading);
+  }
+
   static async getInitialProps(ctx) {
     const { Component } = ctx;
     console.log("app init");
@@ -28,10 +57,19 @@ class MyApp extends App {
     // console.log(Component, pageProps);
     return (
       <Provider store={reduxStore}>
+        {/* 因为是一个全局的遮罩层，是fixed的的组件 ，放layout上面*/}
+        <PageLoading />
         <Layout>
-          <MyContext.Provider value={this.state.context}>
+          {this.state.loading ? <PageLoading /> : null}
+          <Layout>
+            <Link href="/">
+              <a>index</a>
+            </Link>
+            <Link href="/detail">
+              <a>detail</a>
+            </Link>
             <Component {...pageProps} />
-          </MyContext.Provider>
+          </Layout>
         </Layout>
       </Provider>
     );

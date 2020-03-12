@@ -1,5 +1,5 @@
 const GITHUB_OAUTH_URL = "https://github.com/login/oauth/authorize";
-const SCOPE = "user%20repo";
+const SCOPE = "user";
 const github = {
   client_id: "c6138bd9dc4d68db97b3",
   client_secret: "248ed8b52fb561f66624e1a1fb351c3f77392af8",

@@ -42,8 +42,9 @@ module.exports = server => {
         });
         // console.log(userInfoResp.data);
         ctx.session.userInfo = userInfoResp.data;
+        // 避免授权跳转之后的页面还是根路径，要求是显示当前路径，随意要对redirect进行处理
         ctx.redirect((ctx.session && ctx.session.urlBeforeOAuth) || "/");
-        // 用完记得清空
+        // urlBeforeOAuth用完记得清空
         ctx.session.urlBeforeOAuth = "";
         //  到这一步就完成去GitHub进行oauth，获取code，然后换取token进而得到用户信息的过程
         const errorMsg = result.data && result.data.error;
@@ -73,8 +74,9 @@ module.exports = server => {
     if (path === "/prepare-auth" && method === "GET") {
       const { url } = ctx.query;
       ctx.session.urlBeforeOAuth = url;
-      ctx.body = "ready";
-      // ctx.redirect(config.OAUTH_URL);
+      // 不加会404
+      // ctx.body = "ready";
+      ctx.redirect(config.OAUTH_URL);
     } else {
       await next();
     }
