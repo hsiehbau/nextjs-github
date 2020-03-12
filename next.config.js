@@ -1,5 +1,7 @@
 const withCss = require("@zeit/next-css");
 const config = require("./config");
+const { GITHUB_OAUTH_URL, OAUTH_URL } = require("./config");
+
 const configs = {
   // 输出目录
   distDir: "dest",
@@ -54,28 +56,10 @@ if (typeof require !== "undefined") {
   require.extensions[".css"] = file => {};
 }
 // withCss得到的是一个nextjs的config配置
-const GITHUB_OAUTH_URL = "https://github.com/login/oauth/authorize";
-const SCOPE = "user";
-module.exports = withCss({
-  // webpack(config) {
-  //   config.plugins.push(new webpack.IgnorePlugin(/\.\/locale$/, /moment$/))
-  //   return config
-  // },
 
+module.exports = withCss({
   publicRuntimeConfig: {
     GITHUB_OAUTH_URL,
-    OAUTH_URL: `${GITHUB_OAUTH_URL}?client_id=${config.github.client_id}&scope=${SCOPE}`
+    OAUTH_URL
   }
-
-  // analyzeBrowser: ['browser', 'both'].includes(process.env.BUNDLE_ANALYZE),
-  // bundleAnalyzerConfig: {
-  //   server: {
-  //     analyzerMode: 'static',
-  //     reportFilename: '../bundles/server.html',
-  //   },
-  //   browser: {
-  //     analyzerMode: 'static',
-  //     reportFilename: '../bundles/client.html',
-  //   },
-  // },
 });
